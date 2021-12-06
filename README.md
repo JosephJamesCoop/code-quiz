@@ -17,11 +17,11 @@ This is score and time based quiz.
 
 # Setup Requirements
 
-click on the link  https://josephjamescoop.github.io/develop-horiseon/
+click on the link  https://josephjamescoop.github.io/code-quiz/
 
 alternatively you can follow these steps/
 
-go to https://github.com/JosephJamesCoop/develop-horiseon and clone the repository
+go to https://github.com/JosephJamesCoop/code-quiz and clone the repository
 open file titled develop-horizon
 open index.html in default browser
 
