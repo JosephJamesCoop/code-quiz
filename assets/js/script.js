@@ -4,21 +4,24 @@ const timeLeft = document.getElementById("timeLeft");
 const timesUp = document.getElementById("timesUp");
 const everything = document.getElementById("everything");
 const startDiv = document.getElementById("start");
-const startQuizButton = document.getElementById("startQuizButton");
+const startQuizBtn = document.getElementById("startQuizBtn");
 const currentQuestion = document.getElementById("currentQuestion");
 const choiceA = document.getElementById("btn0");
 const choiceB = document.getElementById("btn1");
 const choiceC = document.getElementById("btn2");
 const choiceD = document.getElementById("btn3");
-const choiceF = document.getElementById("btn4");
-const choiceG = document.getElementById("btn5");
+const choiceE = document.getElementById("btn4");
 const summary = document.getElementById("summary");
 const finalScore = document.getElementById("finalScore");
 const initialInput = document.getElementById("initialInput");
 const submitBtn = document.getElementById("submitBtn");
 const highScoreSection = document.getElementById("highScoreSection");
 const listOfHighScores = document.getElementById("listOfHighScores");
-
+const questionDiv = document.getElementById("questionDiv");
+const questionTitle = document.getElementById("questionTitle");
+const answerCheck = document.getElementById("answerCheck");
+const goBackBtn = document.getElementById("goBackBtn");
+const clearHighScoreBtn = document.getElementById("clearHighScoreBtn");
 
 
 const quizQuestions = [{
@@ -65,72 +68,139 @@ const quizQuestions = [{
    correctAnswer: 5
 }];
 
-function quiz(quizQuestions) {
-   this.score = 0;
-   this.quesstions = questions;
-   this.questionIndex = 0;
+
+
+const totalTime = 160;
+
+const newQuiz = () => {
+    questionIndex = 0;
+    totalTime = 160;
+    timeLeft.textContent = totalTime;
+    initialInput.textContent = "";
+
+    const startTimer = setInterval(function() {
+        totalTime--;
+        timeLeft.textContent = totalTime;
+        if(totalTime <= 0) {
+            clearInterval(startTimer);
+            if (questionIndex < questions.length - 1) {
+                endGame();
+            }
+        }
+    },1000);
+};
+startQuizBtn.addEventListener("click", newQuiz);
+choiceA.addEventListener("click", chooseA);
+choiceB.addEventListener("click", chooseB);
+choiceC.addEventListener("click", chooseC);
+choiceD.addEventListener("click", chooseD);
+choiceE.addEventListener("click", chooseE);
+
+const endGame = () => {
+
+
+   finalScore.textContent = correctAns;
 }
 
 
+const totalTime = 151;
+const newQuiz = () => {
+    questionIndex = 0;
+    totalTime = 150;
+    timeLeft.textContent = totalTime;
+    initialInput.textContent = "";
 
+    startDiv.style.display = "none";
+    questionDiv.style.display = "block";
+    timer.style.display = "block";
+    timesUp.style.display = "none";
 
+    const startTimer = setInterval(function() {
+        totalTime--;
+        timeLeft.textContent = totalTime;
+        if(totalTime <= 0) {
+            clearInterval(startTimer);
+            if (questionIndex < questions.length - 1) {
+                endGame();
+            }
+        }
+    },1000);
 
+    showQuiz();
+};
 
-const quiz = Quiz(quizQuestions);
+const checkAnswer = (answer) => {
 
-   const clock = 50;
-   const timer = setInterval(function() {
-      
-     if (clock >= 0) {      
-       timerClock.textContent = clock;
-         clock--;
-      }
-      else {
+    const lineBreak = document.getElementById("lineBreak");
+    lineBreak.style.display = "block";
+    answerCheck.style.display = "block";
+
+    if (questions[questionIndex].answer === questions[questionIndex].choices[answer]) {
      
-        clearInterval(timer);
-        console.log('yes2"')
-      }
-     }, 1000);
+        correctAns++;
+  
+        answerCheck.textContent = "Correct!";
+    } else {
 
-     function showQuestions(questions, currentQuestion){
-      // we'll need a place to store the output and the answer choices
-      const output = [];
-      const answers;
-   
-      // for each question...
-      for(const i=0; i<questions.length; i++){
-         
-         // first reset the list of answers
-         answers = [];
-   
-         // for each available answer to this question...
-         for(number in questions[i].answers){
-console.log(questions.length)
-answers.push(
-   '<label>'
-      + '<input type="radio" name="question'+i+'" value="'+letter+'">'
-      + letter + ': '
-      + questions[i].answers[letter]
-   + '</label>'
-);
+        totalTime -= 10;
+        timeLeft.textContent = totalTime;
+        answerCheck.textContent = "Wrong! The correct answer is: " + questions[questionIndex].answer;
+    }
+
+    questionIndex++;
+    if (questionIndex < questions.length) {
+        nextQuestion();
+    } else {
+
+        endGame();
+    }
 }
 
-// add this question and its answers to the output
-output.push(
-'<div class="question">' + questions[i].question + '</div>'
-+ '<div class="answers">' + answers.join('') + '</div>'
-);
+const chooseA = () => { checkAnswer(0); };
+const chooseB = () => { checkAnswer(1); };
+const chooseC = () => { checkAnswer(2); };
+const chooseD = () => { checkAnswer(3); };
+
+const endGame = () => {
+    summary.style.display = "block";
+    questionDiv.style.display = "none";
+    startDiv.style.display = "none";
+    timer.style.display = "none";
+    timesUp.style.display = "block";
+
+    finalScore.textContent = correctAns;
 }
 
-// finally combine our output list into one string of html and put it on the page
-currentQuestion.innerHTML = output.join('');
-}
+const storeHighScores = (event) => {
+    event.preventDefault();
 
+    if (initialInput.value === "") {
+        alert("Please enter your initials!");
+        return;
+    } 
 
+    startDiv.style.display = "none";
+    timer.style.display = "none";
+    timesUp.style.display = "none";
+    summary.style.display = "none";
+    highScoreSection.style.display = "block";   
 
+    const savedHighScores = localStorage.getItem("high scores");
+    const scoresArray;
+
+    if (savedHighScores === null) {
+        scoresArray = [];
+    } else {
+        scoresArray = JSON.parse(savedHighScores)
+    }
+
+    const userScore = {
+        initials: initialInput.value,
+        score: finalScore.textContent
+    };
+    scoresArray.push(userScore);
+
+    const scoresArrayString = JSON.stringify(scoresArray);
+    window.localStorage.setItem("high scores", scoresArrayString);
    
-
-
-
-
-         showQuestions(questions, currentQuestion);
+}
